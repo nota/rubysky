@@ -1,0 +1,9 @@
+---
+name: tzinfo
+version: '2.0'
+source:
+  type: git
+  name: ruby/gem_rbs_collection
+  revision: 0a6ea105a0afc7eaee4494585a7775f47eea6145
+  remote: https://github.com/ruby/gem_rbs_collection.git
+  repo_dir: gems

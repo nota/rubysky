@@ -1,4 +1,101 @@
-module Rubysky
+module RubySky
   VERSION: String
-  # See the writing guide of rbs: https://github.com/ruby/rbs#guides
+
+  class Client
+    PDSHOST_BSKY_SOCIAL: String
+
+    def self.from_refresh_jwt: (refresh_jwt: String, ?pds: String) -> Client
+    def self.from_app_jwt: (identifier: String, password: String, ?pds: String) -> Client
+
+    def initialize: (client: Raw::Client) -> void
+    def post: (text: String, images: Array[{data: IO, mime_type: String, ?alt: String}]) -> Post
+    def refresh_jwt: () -> String
+
+    attr_reader client: Raw::Client
+  end
+
+  class Post
+    def initialize: (raw: Raw::Post, repo: String) -> void
+
+    def http_uri: () -> String
+  end
+
+  module Raw
+    class Client
+      module SendRequester
+        def send_post: (pds: String, path: String, ?body: String?, ?headers: Hash[String, String | Array[String]], ?auth: String?) -> Net::HTTPResponse
+        def ensure_success: (res: Net::HTTPResponse, ?expected_code: String | Regexp, ?called_from: String?) -> void
+      end
+
+      include SendRequester
+      extend SendRequester
+
+      CREATE_SESSION_PATH: String
+      GET_SESSION_PATH: String
+      REFRESH_SESSION_PATH: String
+      CREATE_RECORD_PATH: String
+      UPLOAD_BLOB_PATH: String
+      POST_COLLECTION: String
+
+      type embed = Raw::ImageEmbed
+
+      def self.from_refresh_jwt: (refresh_jwt: String, pds: String) -> Client
+      def self.create_session: (pds: String, identifier: String, password: String) -> Client
+
+      def initialize: (pds: String, session: Raw::Session) -> void
+      def post: (text: String, ?embed: embed?, ?created_at: String) -> Raw::Post
+      def upload_blob: (file: IO, mime_type: String) -> Hash[String, untyped]
+      def upload_image: (file: IO, mime_type: String, ?alt: String) -> untyped
+
+      def refresh!: (?refresh_jwt: String?, ?pds: String?) -> void
+      def refresh_if_needed: () -> void
+
+      def valid_access_jwt?: () -> bool
+
+      attr_reader pds: String
+      attr_reader session: Raw::Session
+    end
+
+    class DIDDoc
+      def initialize: (did: String, did_doc: Hash[String, untyped]) -> void
+      def to_json: () -> String
+
+      attr_reader did: String
+      @did_doc: Hash[String, untyped]
+    end
+
+    class ImageEmbed
+      type image = {alt: String, image: {ref: { "$link" => String }, mime_type: String, size: Integer }}
+      def initialize: (images: Array[image]) -> void
+      @images: Array[image]
+    end
+
+    class Session
+      type accountStatus = "takendown" | "suspended" | "deactivated"
+
+      attr_reader refresh_jwt: String
+      attr_reader access_jwt: String
+      attr_reader did_doc: DIDDoc
+      attr_reader handle: String
+      attr_reader email: String
+      attr_reader email_confirmed: bool
+      attr_reader email_auth_factor: bool
+      attr_reader active: bool
+      attr_reader status: accountStatus
+
+      def initialize: (refresh_jwt: String, access_jwt: String, did_doc: DIDDoc, handle: String, email: String,
+                       email_confirmed: bool, email_auth_factor: bool, active: bool, status: accountStatus) -> void
+
+      def self.from_hash: (Hash[String, untyped]) -> Session
+      def update_by_hash: (Hash[String, untyped]) -> void
+    end
+
+    class Post
+      def initialize: (uri: String, cid: String, commit: { cid: String, rev: String }, validation_status: String) -> void
+      def self.from_hash: (Hash[String, untyped]) -> Post
+    end
+  end
+
+  class Error < StandardError
+  end
 end
