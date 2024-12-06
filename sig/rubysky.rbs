@@ -10,6 +10,8 @@ module RubySky
     def initialize: (client: Raw::Client) -> void
     def post: (text: String, images: Array[{data: IO, mime_type: String, ?alt: String}]) -> Post
     def refresh_jwt: () -> String
+    def user_did: () -> Hash[String, untyped]
+    def handle: () -> String
 
     attr_reader client: Raw::Client
   end
@@ -61,6 +63,7 @@ module RubySky
       def to_json: () -> String
 
       attr_reader did: String
+      attr_reader did_doc: Hash[String, untyped]
       @did_doc: Hash[String, untyped]
     end
 

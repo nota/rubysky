@@ -36,5 +36,13 @@ module RubySky
     def refresh_jwt
       @client.session.refresh_jwt
     end
+
+    def user_did
+      @client.session.did_doc.did_doc
+    end
+
+    def handle
+      @client.session.handle
+    end
   end
 end

@@ -4,7 +4,7 @@ module RubySky
   module Raw
     # DID Document
     class DIDDoc
-      attr_reader :did
+      attr_reader :did, :did_doc
 
       def initialize(did:, did_doc:)
         @did = did
