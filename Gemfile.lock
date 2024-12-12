@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    rubysky (0.1.0)
+    rubysky (0.2.1)
       jwt (~> 2.9)
 
 GEM
