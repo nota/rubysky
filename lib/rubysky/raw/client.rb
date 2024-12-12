@@ -110,7 +110,7 @@ module RubySky
       private
 
       def valid_access_jwt?
-        jwt = JWT.decode(@access_jwt, nil, false, algorithm: "RS256")
+        jwt = JWT.decode(@session.access_jwt, nil, false, algorithm: "RS256")
         payload = jwt[0]
         payload["exp"] > Time.now.to_i + 10
       end
@@ -120,9 +120,8 @@ module RubySky
       end
 
       def refresh!(refresh_jwt: nil, pds: nil)
-        @refresh_jwt = refresh_jwt if refresh_jwt
         @pds = pds if pds
-        res = send_post(pds: @pds, path: REFRESH_SESSION_PATH, auth: @refresh_jwt)
+        res = send_post(pds: @pds, path: REFRESH_SESSION_PATH, auth: refresh_jwt || @session.refresh_jwt)
         ensure_success(res:, called_from: REFRESH_SESSION_PATH)
 
         json = JSON.parse(res.body)
