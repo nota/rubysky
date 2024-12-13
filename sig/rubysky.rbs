@@ -11,6 +11,7 @@ module RubySky
     def post: (text: String, images: Array[{data: IO, mime_type: String, ?alt: String}]) -> Post
     def refresh_jwt: () -> String
     def user_did: () -> Hash[String, untyped]
+    def user_info: () -> Hash[String, untyped]
     def handle: () -> String
 
     attr_reader client: Raw::Client

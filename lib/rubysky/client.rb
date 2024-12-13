@@ -41,6 +41,21 @@ module RubySky
       @client.session.did_doc.did_doc
     end
 
+    def user_info
+      {
+        "pds" => @client.pds,
+        "access_jwt" => @client.session.access_jwt,
+        "refresh_jwt" => @client.session.refresh_jwt,
+        "did" => @client.session.did_doc.did,
+        "did_doc" => @client.session.did_doc.did_doc,
+        "email" => @client.session.email,
+        "email_confirmed" => @client.session.email_confirmed,
+        "email_auth_factor" => @client.session.email_auth_factor,
+        "active" => @client.session.active,
+        "status" => @client.session.status
+      }.compact
+    end
+
     def handle
       @client.session.handle
     end
