@@ -7,11 +7,15 @@ module RubySky
         @images = images
       end
 
-      def to_json(*_args)
+      def as_json(*_args)
         {
           "$type": "app.bsky.embed.images",
           images: @images
-        }.to_json
+        }
+      end
+
+      def to_json(*_args)
+        as_json.to_json
       end
     end
   end
