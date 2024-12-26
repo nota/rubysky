@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require "net/http"
+
 module RubySky
   module Raw # :nodoc:
     class Client # :nodoc:
@@ -74,6 +76,9 @@ module RubySky
           createdAt: created_at
         } # : Hash[Symbol, untyped]
 
+        facets = parse_facets(text:)
+
+        record[:facets] = facets unless facets.empty?
         record[:embed] = embed if embed
 
         res = send_post(pds: @pds, path: CREATE_RECORD_PATH,
@@ -126,6 +131,36 @@ module RubySky
 
         json = JSON.parse(res.body)
         @session = Session.from_hash(json)
+      end
+
+      def parse_facets(text:)
+        facets = [] # : Array[facet]
+        # parse_mentions もここでする必要が本当はあるよ。
+        facets += parse_uris(text:)
+        facets
+      end
+
+      def link_facet(start:, end:, uri:)
+        {
+          index: {
+            byteStart: start,
+            byteEnd: binding.local_variable_get(:end) # endは予約語
+          },
+          features: [
+            {
+              "$type": "app.bsky.richtext.facet#link",
+              uri:
+            }
+          ]
+        }
+      end
+
+      def parse_uris(text:)
+        reg = URI::DEFAULT_PARSER.make_regexp(%w[http https])
+        text.gsub(reg).map do
+          m = Regexp.last_match
+          link_facet(start: m.begin(0), end: m.end(0), uri: m.to_s)
+        end
       end
     end
   end

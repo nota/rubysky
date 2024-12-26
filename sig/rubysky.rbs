@@ -41,6 +41,7 @@ module RubySky
       POST_COLLECTION: String
 
       type embed = Raw::ImageEmbed
+      type facet = { index: { byteStart: Integer, byteEnd: Integer }, features: Array[Hash[Symbol, untyped]] }
 
       def self.from_refresh_jwt: (refresh_jwt: String, pds: String) -> Client
       def self.create_session: (pds: String, identifier: String, password: String) -> Client
@@ -54,6 +55,11 @@ module RubySky
       def refresh_if_needed: () -> void
 
       def valid_access_jwt?: () -> bool
+
+      def parse_facets: (text: String) -> Array[facet]
+      def parse_uris: (text: String) -> Array[facet]
+
+      def link_facet: (start: Integer, end: Integer, uri: String) -> facet
 
       attr_reader pds: String
       attr_reader session: Raw::Session
