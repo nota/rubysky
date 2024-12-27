@@ -44,6 +44,9 @@ module RubySky
 
       POST_COLLECTION = "app.bsky.feed.post"
 
+      # app.bsky.embed.images lexicon
+      UPLOAD_SIZE_LIMIT = 10_000_000
+
       attr_reader :pds, :session
 
       def self.create_session(identifier:, password:, pds:)
@@ -95,6 +98,11 @@ module RubySky
 
       def upload_blob(file:, mime_type:)
         body = file.read
+        if body.size > UPLOAD_SIZE_LIMIT
+          raise Error,
+                "upload image size shoule be less than #{UPLOAD_SIZE_LIMIT} bytes(got #{body.size} bytes)"
+        end
+
         res = send_post(pds: @pds, path: UPLOAD_BLOB_PATH,
                         body:,
                         headers: {

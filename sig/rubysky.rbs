@@ -39,6 +39,7 @@ module RubySky
       CREATE_RECORD_PATH: String
       UPLOAD_BLOB_PATH: String
       POST_COLLECTION: String
+      UPLOAD_SIZE_LIMIT: Integer
 
       type embed = Raw::ImageEmbed
       type facet = { index: { byteStart: Integer, byteEnd: Integer }, features: Array[Hash[Symbol, untyped]] }
